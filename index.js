@@ -3,6 +3,7 @@ import express from 'express';
 import connectToDb from './config/database.js'
 import api from './routes/api.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 // Load env variables
 if (process.env.NODE_ENV != 'production') {
@@ -14,6 +15,7 @@ const app = express();
 
 // Configure express app (middleware)
 app.use(express.json());
+app.use(cors());
 
 // Connect to database
 connectToDb();
