@@ -319,6 +319,16 @@ In this example, we define three middleware functions: loggerMiddleware, authMid
 
 We then add the middleware functions to the Express app using the use() method. We add the loggerMiddleware globally, so it will be executed for every incoming request. We add the authMiddleware locally to a specific route, so it will only be executed for requests to that route. Finally, we add the errorMiddleware globally to handle any errors that occur during the request-response cycle.
 
+<ins>For MERN Stack Apps:</ins>
+
+We use `app.use(cors());` in Express when building a MERN (MongoDB, Express, React, Node) stack app to enable Cross-Origin Resource Sharing (CORS).
+
+CORS is a security feature implemented by web browsers that prevents a web page from making requests to a different domain than the one that served the web page. In the context of a MERN stack app, this means that the React client running in the user's browser cannot make requests to the Express server running on a different domain.
+
+By using app.use(cors()) in Express, we are telling the server to include CORS headers in its responses, which will allow the React client to make requests to the Express server from a different domain.
+
+Note that it's important to properly configure CORS to avoid potential security vulnerabilities. For example, you may want to limit which domains are allowed to make requests to your server by passing an options object to cors().
+
 ## 9. Extra Features
 
 ### 9.1. Exceptions
