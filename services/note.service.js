@@ -1,4 +1,4 @@
-import Note from "../models/Note.js";
+import Note from "../models/note.model.js";
 
 /* [GET] View All Notes */
 // Find the notes, then return them
@@ -71,4 +71,6 @@ const deleteNoteById = async (id) => {
     }
 }
 
-export { getAllNotes, getNoteById, createNote, updateNoteById, deleteNoteById };
+const noteService = { getAllNotes, getNoteById, createNote, updateNoteById, deleteNoteById }; 
+
+export default noteService;

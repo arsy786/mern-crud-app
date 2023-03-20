@@ -15,6 +15,7 @@
   - [9. Extra Features](#9-extra-features)
     - [9.1. Exceptions](#91-exceptions)
     - [9.2. Testing](#92-testing)
+      - [Mocking DB](#mocking-db)
     - [9.3. DTO Layer](#93-dto-layer)
     - [9.4. Logging](#94-logging)
     - [9.5. Security](#95-security)
@@ -34,6 +35,8 @@ NodeJS - Runtime
 [Create a MERN CRUD App (1/6) - Creating an Express backend (Youtube/CodingWithRobby) ](https://www.youtube.com/watch?v=jK7mcMrYzj8&list=PL-LRDpVN2fZA-1igOQ6PDcqfBjS-vaC7w)
 
 [Build A REST API With Node.js, Express, & MongoDB - Quick (Youtube/WebDevSimplified)](https://www.youtube.com/watch?v=fgTGADljAeg&t=2s)
+
+[How to Build a REST API (Node.js & Express) (Youtube/Gravity)](https://www.youtube.com/watch?v=MDMWb1EM6O0)
 
 Express is an un-opinionated framework therefore you can organise your project however you like. However, a very popular and widely adopted pattern is MVC. MVC (Model-View-Controller) is a software design pattern that separates an application into three interconnected components:
 
@@ -370,7 +373,134 @@ In this example, we import our errorHandler middleware function and our todoRout
 
 By adding the errorHandler middleware function to our app, any errors that occur during the execution of our app will be caught by this middleware function and handled appropriately, preventing the app from crashing and providing a more user-friendly error message to the client.
 
+NOTE: We can use this to handle all 5xx server errors outside of the Controller to make the code more readable. For example, in the Example app in Section 11, we can implement: [Hate Try...Catch Error Handling in Node.js? Do This Instead (Youtube/Gravity)](https://www.youtube.com/watch?v=s5YoXms0ECs). Now, we only need if else statements in the Controller layer (no try-catch required), that will return 2xx or 4xx codes, as any 5xx status codes will be handled directly by the exception handler in the Router layer!
+
 ### 9.2. Testing
+
+[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20)
+
+Here's an example of how to set up and run tests using Jest in an Express REST API:
+
+1. Install Jest and any necessary dependencies:
+
+```js
+npm install --save-dev jest supertest
+```
+
+1. Create a new folder called tests in the root of your project.
+2. Inside the tests folder, create a new file called example.test.js:
+
+```bash
+const request = require('supertest');
+const app = require('../app');
+
+describe('Example endpoint', () => {
+  it('should return a 200 status code', async () => {
+    const res = await request(app).get('/example');
+    expect(res.statusCode).toEqual(200);
+  });
+});
+```
+
+1. In the above example, we are testing the /example endpoint of our app. Replace this with the endpoint you want to test.
+2. In the above example, we are using supertest to send HTTP requests to our app. Make sure to import app from your main index.js or app.js file.
+3. In the above example, we are using the Jest expect function to make assertions about the response. You can add any additional assertions you need here.
+4. In your package.json file, add the following under "scripts":
+
+```json
+"test": "jest"
+```
+
+1. Run the tests:
+
+```bash
+npm test
+```
+
+That's it! You should now see the results of your tests in the terminal.
+
+NOTE: 
+
+[Configuring Jest to support ES6 import/export? (StackOverflow/PeterMortensen)](https://stackoverflow.com/a/59718259)
+
+[Express.js testing: mocking MongoDB (Medium/LucaPizzini)](https://medium.com/weekly-webtips/express-js-testing-mocking-mongodb-46c3797a201)
+
+[How to Test Your Express.js and Mongoose Apps with Jest and SuperTest (FreeCodeCamp/RakeshPotnuru)](https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/) : [GitHub](https://github.com/itsrakeshhq/jest-tests-demo)
+
+[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20) : [GitHub](https://github.com/Sam-Meech-Ward/express_jest_and_mocks/tree/express)
+
+
+#### Mocking DB
+
+Problem - In my express rest api, I am testing my endpoints using jest and supertest. I have noticed that my tests are working, but they are interacting with the actual database. I want to use a fake temporary database so that any tests being run, do not effect the actual database.
+
+Solution - 
+
+To use a temporary fake database for testing your Express REST API, you can use a package like mongodb-memory-server. This package allows you to spin up an in-memory MongoDB database during the test setup and teardown. Here's an example of how to use it:
+
+1. First, install the mongodb-memory-server package:
+
+```bash
+npm install mongodb-memory-server --save-dev
+```
+
+1. Create a separate configuration file for your test environment, where you will set up the in-memory MongoDB database. Here's an example of what that file could look like:
+
+```js
+// test/config.js
+
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+module.exports = async function () {
+  const mongoServer = new MongoMemoryServer();
+
+  const mongoUri = await mongoServer.getUri();
+  const mongoOptions = {}; // any additional options you want to pass to mongoose.connect()
+
+  return {
+    mongoUri,
+    mongoOptions
+  };
+};
+```
+
+This file exports an async function that sets up a new in-memory MongoDB database using the MongoMemoryServer class. It returns an object with the MongoDB connection URI and any additional options you want to pass to mongoose.connect().
+
+1. In your test file, use the beforeAll and afterAll hooks to set up and tear down the database. Here's an example:
+
+```js
+// tests/app.test.js
+
+const request = require('supertest');
+const app = require('../app');
+const mongoose = require('mongoose');
+
+let mongoServer;
+
+beforeAll(async () => {
+  const config = await require('../config')();
+  mongoServer = await mongoose.connect(config.mongoUri, config.mongoOptions);
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
+});
+
+describe('GET /users', () => {
+  test('responds with a list of users', async () => {
+    const res = await request(app).get('/users');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+});
+
+// more test cases...
+```
+
+In this example, we use the beforeAll and afterAll hooks to set up and tear down the database using the config function from the previous step. In the test cases, we use request(app) to send HTTP requests to the API and make assertions using Jest's expect function.
+
+By using mongodb-memory-server and setting up a temporary in-memory MongoDB database for testing, you can run your tests without affecting your production database.
 
 
 ### 9.3. DTO Layer
