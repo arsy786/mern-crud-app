@@ -32,13 +32,23 @@ ReactJS - Frontend (ui)
 NodeJS - Runtime
 
 ## 1. REST API
+<ins>Guides:</ins>
+<br />
 [Create a MERN CRUD App (1/6) - Creating an Express backend (Youtube/CodingWithRobby) ](https://www.youtube.com/watch?v=jK7mcMrYzj8&list=PL-LRDpVN2fZA-1igOQ6PDcqfBjS-vaC7w)
-
+<br />
 [Build A REST API With Node.js, Express, & MongoDB - Quick (Youtube/WebDevSimplified)](https://www.youtube.com/watch?v=fgTGADljAeg&t=2s)
-
+<br />
 [How to Build a REST API (Node.js & Express) (Youtube/Gravity)](https://www.youtube.com/watch?v=MDMWb1EM6O0)
+<br />
 
-Express is an un-opinionated framework therefore you can organise your project however you like. However, a very popular and widely adopted pattern is MVC. MVC (Model-View-Controller) is a software design pattern that separates an application into three interconnected components:
+<ins>Best Practice:</ins>
+<br />
+[REST API Mistakes Every Junior Developer should Avoid | clean-code (Youtube/CoderOne)](https://www.youtube.com/watch?v=JxeTegu4dD8)
+<br />
+
+Express.js, or simply Express, is a back end web application framework for building RESTful APIs with Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.
+
+It is an un-opinionated framework therefore you can organise your project however you like. However, a very popular and widely adopted pattern is MVC. MVC (Model-View-Controller) is a software design pattern that separates an application into three interconnected components:
 
 - Model: represents the data and entities/schema of the application.
 - View: displays the data to the user and handles user input.
@@ -46,10 +56,12 @@ Express is an un-opinionated framework therefore you can organise your project h
 
 This separation of concerns allows for better code organization, easier maintenance and testing, and improved scalability.
 
-Note: For the 'View' In REST API's, we typically will not be serving any static pages/resources (maybe an index/welcome page that gives directions on how to call the API).
+<ins>NOTE: </ins>
+<br>
+For the 'View' In REST API's, we typically will not be serving any static pages/resources (maybe an index/welcome page that gives directions on how to call the API).
 
 ## 2. Express App Setup
-Here are the steps to set up an Express app using npm:
+Here are the steps to set up a basic Express app using npm:
 
 1. Open a command prompt or terminal window and navigate to the directory where you want to create your project.
 2. Run the following command to create a new npm project:
@@ -66,7 +78,7 @@ npm install express
 ```
 This will download and install the latest version of Express and save it as a dependency in your project's package.json file.
 
-1. Create a new file called index.js in the root directory of your project.
+1. Create a new file called index.js (or app.js) in the root directory of your project.
 2. Paste the following code into index.js:
 
 ```js
@@ -104,6 +116,10 @@ This will start the server and print a message to the console indicating which p
 
 That's it! You've successfully set up an Express app using npm. You can now add more routes, middleware, and functionality to your app as needed.
 
+<ins>NOTE: </ins>
+<br>
+Can install the package 'nodemon' to run the app `npm install nodemon`. Nodemon is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected. Nodemon does not require any additional changes to your code or method of development. Nodemon is a replacement wrapper for node e.g. `nodemon index.js`.
+
 ## 3. Config
 In an Express REST API, the config folder typically contains configuration files for the application. These files can include environment variables, database configuration, third-party API keys, and other settings that are specific to the application.
 
@@ -124,7 +140,9 @@ const connection = mysql.createConnection({
 module.exports = connection;
 ```
 
-NOTE: here's an example of a database.js file using MongoDB with Mongoose:
+<ins>NOTE:</ins> 
+<br>
+Here's an example of a database.js file using MongoDB with Mongoose:
 
 ```js
 const mongoose = require('mongoose');
@@ -248,7 +266,9 @@ module.exports = User;
 
 As you can see, the TypeORM model defines an Entity class that defines the structure of the User resource, and uses decorators to define the properties of the class. The Mongoose model uses a Schema object to define the structure of the User resource, and specifies the properties of the schema as objects with specific configurations. Both models are responsible for defining the schema and interactions with the database for the User resource, but they use different syntax and configuration options based on the database they are interacting with.
 
-NOTE: Both TypeORM and Mongoose provide pre-built functions that can be used to interact with a database in an Express REST API. They are designed to make it easier to work with databases in an Express REST API, and they can save you a lot of time and effort compared to writing raw SQL queries or MongoDB commands.
+<ins>NOTE:</ins>
+<br>
+Both TypeORM and Mongoose provide pre-built functions that can be used to interact with a database in an Express REST API. They are designed to make it easier to work with databases in an Express REST API, and they can save you a lot of time and effort compared to writing raw SQL queries or MongoDB commands.
 
 ## 5. Service (Optional)
 
@@ -263,17 +283,25 @@ There are several reasons why some Express REST APIs may use a Service layer, wh
 
 However, there are cases where a Service layer may not be necessary or may add unnecessary complexity to the application. If the business logic is simple and straightforward, and there is no need for reusability or testing, a Service layer may be overkill. Ultimately, the decision to use a Service layer or not will depend on the specific needs of the application and the preferences of the development team.
 
-Note: Example below.
+<ins>NOTE: </ins>
+<br> 
+Example in Section: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service)
 
 ## 6. Controller
 A Controller handles requests and responses between the client and the server. It takes input from the user, retrieves data from the database using the Model, and then formats the data for the client. The Controller also handles errors and exceptions that may occur during the request.
 
-Note: Example below.
+<ins>NOTE: </ins>
+<br> 
+Examples in Sections: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service) and
+[11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service)
 
 ## 7. Routes
 A Route maps a URL path to a specific Controller function. It defines what HTTP methods (GET, POST, PUT, DELETE, etc.) are allowed for that endpoint.
 
-Note: Example below.
+<ins>NOTE: </ins>
+<br>
+Examples in Sections: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service) and
+[11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service)
 
 ## 8. Middleware
 In an Express REST API, Middleware functions are functions that are executed in the request-response cycle between the server receiving a request and sending a response back to the client. Middleware functions can be used for a variety of purposes, such as logging, authentication, error handling, and more. Middleware functions can be defined globally for the entire application, or locally for specific routes.
@@ -328,7 +356,7 @@ We use `app.use(cors());` in Express when building a MERN (MongoDB, Express, Rea
 
 CORS is a security feature implemented by web browsers that prevents a web page from making requests to a different domain than the one that served the web page. In the context of a MERN stack app, this means that the React client running in the user's browser cannot make requests to the Express server running on a different domain.
 
-By using app.use(cors()) in Express, we are telling the server to include CORS headers in its responses, which will allow the React client to make requests to the Express server from a different domain.
+By using `app.use(cors())` in Express, we are telling the server to include CORS headers in its responses, which will allow the React client to make requests to the Express server from a different domain.
 
 Note that it's important to properly configure CORS to avoid potential security vulnerabilities. For example, you may want to limit which domains are allowed to make requests to your server by passing an options object to cors().
 
@@ -346,6 +374,10 @@ function errorHandler(err, req, res, next) {
 
 module.exports = errorHandler;
 ```
+
+<ins>NOTE:</ins>
+<br>
+errorHandler here is the same as errorMiddleware in above Section: [8. Middleware](#8-middleware)
 
 In this example, we define a function called errorHandler that takes four parameters: err, req, res, and next. This function is a middleware function that is used to handle errors that occur during the execution of our application.
 
@@ -373,7 +405,9 @@ In this example, we import our errorHandler middleware function and our todoRout
 
 By adding the errorHandler middleware function to our app, any errors that occur during the execution of our app will be caught by this middleware function and handled appropriately, preventing the app from crashing and providing a more user-friendly error message to the client.
 
-NOTE: We can use this to handle all 5xx server errors outside of the Controller to make the code more readable. For example, in the Example app in Section 11, we can implement: [Hate Try...Catch Error Handling in Node.js? Do This Instead (Youtube/Gravity)](https://www.youtube.com/watch?v=s5YoXms0ECs). Now, we only need if else statements in the Controller layer (no try-catch required), that will return 2xx or 4xx codes, as any 5xx status codes will be handled directly by the exception handler in the Router layer!
+<ins>NOTE: </ins>
+<br>
+We can use this to handle all 5xx server errors outside of the Controller to make the code in Section: [11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service) more readable. For example, we can implement the error/exception handler as shown in the video: [Hate Try...Catch Error Handling in Node.js? Do This Instead (Youtube/Gravity)](https://www.youtube.com/watch?v=s5YoXms0ECs). Here, we only need if-else statements in the Controller layer (no try-catch required), that will return 2xx or 4xx codes, as any 5xx status codes will be handled directly by the exception handler in the Middleware (or Router/App) layer!
 
 ### 9.2. Testing
 
@@ -419,14 +453,15 @@ npm test
 
 That's it! You should now see the results of your tests in the terminal.
 
-NOTE: 
+<ins>NOTE: </ins>
+<br>
 
 [Configuring Jest to support ES6 import/export? (StackOverflow/PeterMortensen)](https://stackoverflow.com/a/59718259)
-
+<br>
 [Express.js testing: mocking MongoDB (Medium/LucaPizzini)](https://medium.com/weekly-webtips/express-js-testing-mocking-mongodb-46c3797a201)
-
+<br>
 [How to Test Your Express.js and Mongoose Apps with Jest and SuperTest (FreeCodeCamp/RakeshPotnuru)](https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/) : [GitHub](https://github.com/itsrakeshhq/jest-tests-demo)
-
+<br>
 [Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20) : [GitHub](https://github.com/Sam-Meech-Ward/express_jest_and_mocks/tree/express)
 
 
@@ -504,10 +539,10 @@ By using mongodb-memory-server and setting up a temporary in-memory MongoDB data
 
 
 ### 9.3. DTO Layer
-TBC
+N/A
 
 ### 9.4. Logging
-In an Express REST API, we can use a logger to keep track of application events and errors. Here's an example of how we can create and use a logger in an Express app:
+In an Express REST API, we can use a logger to keep track of application events and errors. We saw a basic example of this in Section: [8. Middleware](#8-middleware). Here's another example of how we can create and use a logger in an Express app:
 
 ```js
 // logger.js
@@ -718,9 +753,13 @@ In this example, the Model is represented by the UserModel, the Controller is re
 
 ## 11. Express REST API Example (No Service)
 
-🚨🚨🚨
+<ins>NOTE: </ins>
+<br> 
+🚨 This is the most common approach for creating Express REST API's.
+<br>
+🚨 This does not mean it is the only approach and that Services are bad, it is simply something to be aware of when reading other devs API's and developing your own.
 
-NOTE: This is the most common approach for creating Express REST API's.
+
 
 Here's an example of an Express REST API that uses a Model and Controller, but doesn't use a Service layer:
 
