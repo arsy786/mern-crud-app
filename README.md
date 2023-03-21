@@ -15,7 +15,6 @@
   - [9. Extra Features](#9-extra-features)
     - [9.1. Exceptions](#91-exceptions)
     - [9.2. Testing](#92-testing)
-      - [Mocking DB](#mocking-db)
     - [9.3. DTO Layer](#93-dto-layer)
     - [9.4. Logging](#94-logging)
     - [9.5. Security](#95-security)
@@ -365,6 +364,10 @@ Note that it's important to properly configure CORS to avoid potential security 
 ### 9.1. Exceptions
 In an Express REST API, we can use an exception handler to catch and handle errors that occur during the execution of our application. Here's an example of how we can create an exception handler in an Express app:
 
+<ins>NOTE:</ins>
+<br>
+errorHandler here is the same as errorMiddleware in above Section: [8. Middleware](#8-middleware)
+
 ```js
 // error-handler.js
 function errorHandler(err, req, res, next) {
@@ -374,10 +377,6 @@ function errorHandler(err, req, res, next) {
 
 module.exports = errorHandler;
 ```
-
-<ins>NOTE:</ins>
-<br>
-errorHandler here is the same as errorMiddleware in above Section: [8. Middleware](#8-middleware)
 
 In this example, we define a function called errorHandler that takes four parameters: err, req, res, and next. This function is a middleware function that is used to handle errors that occur during the execution of our application.
 
@@ -411,9 +410,12 @@ We can use this to handle all 5xx server errors outside of the Controller to mak
 
 ### 9.2. Testing
 
-[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20)
+[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20) - [GitHub](https://github.com/Sam-Meech-Ward/express_jest_and_mocks/tree/express)
+<br>
+[How to Test Your Express.js and Mongoose Apps with Jest and SuperTest (FreeCodeCamp/RakeshPotnuru)](https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/) - [GitHub](https://github.com/itsrakeshhq/jest-tests-demo)
+<br>
 
-Here's an example of how to set up and run tests using Jest in an Express REST API:
+Here's an example of how to set up and run tests using Jest (and Supertest) in an Express REST API:
 
 1. Install Jest and any necessary dependencies:
 
@@ -455,23 +457,17 @@ That's it! You should now see the results of your tests in the terminal.
 
 <ins>NOTE: </ins>
 <br>
+Problem - If I use import/export from ES6 then all my Jest tests fail with error. Obviously there's a problem with import/export here. It's not practical for me to rewrite my code using ES5 syntax just to make my test framework happy.
 
-[Configuring Jest to support ES6 import/export? (StackOverflow/PeterMortensen)](https://stackoverflow.com/a/59718259)
-<br>
+Solution - [Configuring Jest to support ES6 import/export? (StackOverflow/PeterMortensen)](https://stackoverflow.com/a/59718259)
+
+<ins>Mocking DB</ins>
+
 [Express.js testing: mocking MongoDB (Medium/LucaPizzini)](https://medium.com/weekly-webtips/express-js-testing-mocking-mongodb-46c3797a201)
-<br>
-[How to Test Your Express.js and Mongoose Apps with Jest and SuperTest (FreeCodeCamp/RakeshPotnuru)](https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/) : [GitHub](https://github.com/itsrakeshhq/jest-tests-demo)
-<br>
-[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20) : [GitHub](https://github.com/Sam-Meech-Ward/express_jest_and_mocks/tree/express)
-
-
-#### Mocking DB
 
 Problem - In my express rest api, I am testing my endpoints using jest and supertest. I have noticed that my tests are working, but they are interacting with the actual database. I want to use a fake temporary database so that any tests being run, do not effect the actual database.
 
-Solution - 
-
-To use a temporary fake database for testing your Express REST API, you can use a package like mongodb-memory-server. This package allows you to spin up an in-memory MongoDB database during the test setup and teardown. Here's an example of how to use it:
+Solution - To use a temporary fake database for testing your Express REST API, you can use a package like mongodb-memory-server. This package allows you to spin up an in-memory MongoDB database during the test setup and teardown. Here's an example of how to use it:
 
 1. First, install the mongodb-memory-server package:
 
@@ -533,13 +529,32 @@ describe('GET /users', () => {
 // more test cases...
 ```
 
-In this example, we use the beforeAll and afterAll hooks to set up and tear down the database using the config function from the previous step. In the test cases, we use request(app) to send HTTP requests to the API and make assertions using Jest's expect function.
+In this example, we use the beforeAll and afterAll hooks to set up and tear down the database using the config function from the previous step. In the test cases, we use `request(app)` to send HTTP requests to the API and make assertions using Jest's `expect` function.
 
 By using mongodb-memory-server and setting up a temporary in-memory MongoDB database for testing, you can run your tests without affecting your production database.
 
 
 ### 9.3. DTO Layer
-N/A
+
+In a RESTful API, DTOs are used to represent the data that is being transferred between the client and the server. They are essentially data containers that carry information about a particular entity or resource in the system. DTOs are often used to abstract away the internal details of the server-side data model and provide a standardized interface for clients to interact with.
+
+Similarly, TypeScript interfaces are used to describe the structure of data objects in a TypeScript application. They define the shape of objects, their properties and their types, and can be used to enforce type checking during development. When used in a REST API, TypeScript interfaces can be thought of as DTOs, as they represent the data that is being sent and received by the API.
+
+However, it is important to note that while TypeScript interfaces can be used as DTOs, they do not necessarily perform all the functions of a DTO. DTOs may also include additional functionality such as validation, data transformation, or serialization/deserialization. Nonetheless, TypeScript interfaces can be a useful tool in building DTOs in a TypeScript-based REST API.
+
+<ins>Summary:</ins>
+
+> In TypeScript, both classes and interfaces can be used to define Data Transfer Objects (DTOs). The choice between using classes or interfaces will depend on the specific requirements of your application.
+>
+>Interfaces are commonly used to define DTOs because they allow you to describe the structure of an object without providing an implementation for its methods. Interfaces are a lightweight way to enforce type safety in your code, and to provide a clear contract between different parts of your application.
+>
+>Classes, on the other hand, can provide more functionality than interfaces, as they allow you to define both the structure and implementation of an object. Classes are often used when you need to define complex data structures that have methods or other behavior.
+>
+>We are using a class to define our dto, because we also use some class validator decorators.
+>
+>In general, if you only need to describe the structure of a DTO, an interface is the preferred choice. However, if you need to add methods or other behavior to your DTO, a class may be a better option.
+
+Source: [API development with nodejs, express and typescript from scratch — DTO, Interface and Authentication (GitConnected/LukasWimhofer)](https://levelup.gitconnected.com/api-development-with-nodejs-express-and-typescript-from-scratch-dto-interface-and-54ebab8c447e)
 
 ### 9.4. Logging
 In an Express REST API, we can use a logger to keep track of application events and errors. We saw a basic example of this in Section: [8. Middleware](#8-middleware). Here's another example of how we can create and use a logger in an Express app:
