@@ -821,14 +821,11 @@ We could extract some of the logic used in the Controller to a Service layer, as
 <ins>Note:</ins>
 <br>
 - `signup()` - In this function it is imperative you do not save passwords in plain-text. Here, Bcrypt is used to encrypt the password before a user is created and stored in the database. To use Bcyrpt, use `npm install bcryptjs` to install the packages to your project.
-<br>
 - `login()` - In this function, a jwt token is issued if the user credentials are valid. Note that the ".env" file contains the secret key used to sign the end of the jwt token. To use JWT, use `npm install jsonwebtoken` to install the packages to your project. Also, cookies are used here to store the jwt token and its properties, such as expiration time and so on. To use cookies, use `npm install cookie-parser` to install the packages to your project (module used in app.js). The method in which the cookies are set in the response can vary, another configuration is: `res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });`
-<br>
 - `logout()` - In this function, the cookie that stores the jwt token is cleared upon reaching the logout endpoint.
-<br>
 - `checkAuth()` - This function is simply used to verify if the user has been authenticated or not.
 
-3. Create the "Auth" Middleware that will be used to authenticate the jwt token in the cookie and check its validity (for the routes this middleware has been added to):
+1. Create the "Auth" Middleware that will be used to authenticate the jwt token in the cookie and check its validity (for the routes this middleware has been added to):
 
 ```js
 const jwt = require("jsonwebtoken");
