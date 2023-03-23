@@ -8,18 +8,17 @@
   - [2. Express App Setup](#2-express-app-setup)
   - [3. Config](#3-config)
   - [4. Model](#4-model)
+    - [4.1. DTO](#41-dto)
   - [5. Service (Optional)](#5-service-optional)
   - [6. Controller](#6-controller)
   - [7. Routes](#7-routes)
   - [8. Middleware](#8-middleware)
-  - [9. Extra Features](#9-extra-features)
-    - [9.1. Exceptions](#91-exceptions)
-    - [9.2. Testing](#92-testing)
-    - [9.3. DTO Layer](#93-dto-layer)
-    - [9.4. Logging](#94-logging)
-    - [9.5. Security](#95-security)
-  - [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service)
-  - [11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service)
+    - [8.1. Exceptions](#81-exceptions)
+    - [8.2. Logging](#82-logging)
+  - [9. Testing](#9-testing)
+  - [10. Security](#10-security)
+  - [11. Express REST API Example (With Service)](#11-express-rest-api-example-with-service)
+  - [12. Express REST API Example (No Service)](#12-express-rest-api-example-no-service)
 
 ## 0. Stack
 MongoDB - Database
@@ -37,6 +36,8 @@ NodeJS - Runtime
 <br />
 [Build A REST API With Node.js, Express, & MongoDB - Quick (Youtube/WebDevSimplified)](https://www.youtube.com/watch?v=fgTGADljAeg&t=2s)
 <br />
+[ExpressJS 2022 Course (Youtube/AnsonTheDeveloper)](https://www.youtube.com/playlist?list=PL_cUvD4qzbkwp6pxx27pqgohrsP8v1Wj2)
+<br />
 [How to Build a REST API (Node.js & Express) (Youtube/Gravity)](https://www.youtube.com/watch?v=MDMWb1EM6O0)
 <br />
 
@@ -45,19 +46,19 @@ NodeJS - Runtime
 [REST API Mistakes Every Junior Developer should Avoid | clean-code (Youtube/CoderOne)](https://www.youtube.com/watch?v=JxeTegu4dD8)
 <br />
 
-Express.js, or simply Express, is a back end web application framework for building RESTful APIs with Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.
+Express.js, or simply Express, is a backend web application framework for building RESTful APIs with Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.
 
-It is an un-opinionated framework therefore you can organise your project however you like. However, a very popular and widely adopted pattern is MVC. MVC (Model-View-Controller) is a software design pattern that separates an application into three interconnected components:
+It is an un-opinionated framework therefore you can organise your project however you like. This repo will serve as a guide and provide a general structure of how to organise your Express REST API's. A very popular and widely adopted pattern is MVC. The Model-View-Controller (MVC) pattern separates the application's concerns into three interconnected components:
 
-- Model: represents the data and entities/schema of the application.
-- View: displays the data to the user and handles user input.
-- Controller: handles user input, applies business logic, updates the model, and updates the view accordingly.
+- Model: This represents the data (entities/schema) and business logic of the application. In the context of an API, the model typically interacts with a database to retrieve or update data.
+- View: This represents the user interface or presentation layer of the application. In the context of an API, the view is responsible for rendering the response that will be sent back to the client.
+- Controller: This acts as an intermediary between the model and the view, handling user input and updating the model accordingly. In the context of an API, the controller receives requests from the client and sends responses back to the client, typically by calling the appropriate methods on the model and rendering the appropriate view.
 
 This separation of concerns allows for better code organization, easier maintenance and testing, and improved scalability.
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br>
-For the 'View' In REST API's, we typically will not be serving any static pages/resources (maybe an index/welcome page that gives directions on how to call the API).
+For the 'View' In REST API's, we typically will not be serving any static pages/resources. If there is a view, it maybe an index/welcome page that gives directions on how to call the API or a message/json that indicates that the server is currently running.
 
 ## 2. Express App Setup
 Here are the steps to set up a basic Express app using npm:
@@ -111,13 +112,14 @@ node index.js
 
 This will start the server and print a message to the console indicating which port it's listening on.
 
-1. Open a web browser and navigate to http://localhost:3000 (or whatever port you specified). You should see the "Hello, world!" message displayed in the browser.
+1. Open a web browser and navigate to http://localhost:3000 (or whatever port you specified in .env file PORT variable). You should see the "Hello, world!" message displayed in the browser.
 
 That's it! You've successfully set up an Express app using npm. You can now add more routes, middleware, and functionality to your app as needed.
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br>
-Can install the package 'nodemon' to run the app `npm install nodemon`. Nodemon is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected. Nodemon does not require any additional changes to your code or method of development. Nodemon is a replacement wrapper for node e.g. `nodemon index.js`.
+- Nodemon is a tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected. Nodemon does not require any additional changes to your code or method of development. To use Nodemon, use `npm install nodemon` to install the packages to your project. Nodemon is a replacement wrapper for node so instead of entering `node index.js` in the terminal, you use `nodemon index.js`. 
+- You can also further configure nodemon in "scripts" in the package.json file. The scripts property contains a set of entries; the key for each entry is a script name, and the corresponding value is a user-defined command to be executed. Scripts are frequently used to test, build, and streamline the needed commands to work with a module.
 
 ## 3. Config
 In an Express REST API, the config folder typically contains configuration files for the application. These files can include environment variables, database configuration, third-party API keys, and other settings that are specific to the application.
@@ -263,11 +265,36 @@ const User = mongoose.model('User', userSchema);
 module.exports = User;
 ```
 
-As you can see, the TypeORM model defines an Entity class that defines the structure of the User resource, and uses decorators to define the properties of the class. The Mongoose model uses a Schema object to define the structure of the User resource, and specifies the properties of the schema as objects with specific configurations. Both models are responsible for defining the schema and interactions with the database for the User resource, but they use different syntax and configuration options based on the database they are interacting with.
+As you can see, the TypeORM model defines an Entity class that defines the structure of the User resource, and uses decorators (annotations) to define the properties of the class. The Mongoose model uses a Schema object to define the structure of the User resource, and specifies the properties of the schema as objects with specific configurations. Both models are responsible for defining the schema and interactions with the database for the User resource, but they use different syntax and configuration options based on the database they are interacting with.
 
 <ins>NOTE:</ins>
 <br>
-Both TypeORM and Mongoose provide pre-built functions that can be used to interact with a database in an Express REST API. They are designed to make it easier to work with databases in an Express REST API, and they can save you a lot of time and effort compared to writing raw SQL queries or MongoDB commands.
+- Both TypeORM and Mongoose provide pre-built functions that can be used to interact with a database in an Express REST API. They are designed to make it easier to work with databases in an Express REST API, and they can save you a lot of time and effort compared to writing raw SQL queries or MongoDB commands.
+- We can add validation to models by installing a validator package (like express-validator or validator) and specifying conditions on the model properties that validate user inputs. For an example of Mongoose validation with error handling see: [Node Auth Tutorial (JWT) #5 - Mongoose Validation (Youtube/TheNetNinja)](https://www.youtube.com/watch?v=nukNITdis9g&list=PL4cUxeGkcC9iqqESP8335DA5cRFp8loyp&index=5).
+
+### 4.1. DTO 
+
+In a RESTful API, DTOs (Data Transfer Objects) are used to represent the data that is being transferred between the client and the server. They are essentially data containers that carry information about a particular entity or resource in the system. DTOs are often used to abstract away the internal details of the server-side data model and provide a standardized interface for clients to interact with.
+
+Similarly, TypeScript interfaces are used to describe the structure of data objects in a TypeScript application. They define the shape of objects, their properties and their types, and can be used to enforce type checking during development. When used in a REST API, TypeScript interfaces can be thought of as DTOs, as they represent the data that is being sent and received by the API.
+
+However, it is important to note that while TypeScript interfaces can be used as DTOs, they do not necessarily perform all the functions of a DTO. DTOs may also include additional functionality such as validation, data transformation, or serialization/deserialization. Nonetheless, TypeScript interfaces can be a useful tool in building DTOs in a TypeScript-based REST API.
+
+Implementation of this is demonstrated in this tutorial: [7. DTO Implementation (Youtube/ProgrammingsFun)](https://www.youtube.com/watch?v=C8T-KsgLLO0)
+
+<ins>Summary:</ins>
+
+In TypeScript, both classes and interfaces can be used to define Data Transfer Objects (DTOs). The choice between using classes or interfaces will depend on the specific requirements of your application.
+
+Interfaces are commonly used to define DTOs because they allow you to describe the structure of an object without providing an implementation for its methods. Interfaces are a lightweight way to enforce type safety in your code, and to provide a clear contract between different parts of your application.
+
+Classes, on the other hand, can provide more functionality than interfaces, as they allow you to define both the structure and implementation of an object. Classes are often used when you need to define complex data structures that have methods or other behavior.
+
+We are using a class to define our dto, because we also use some class validator decorators.
+
+In general, if you only need to describe the structure of a DTO, an interface is the preferred choice. However, if you need to add methods or other behavior to your DTO, a class may be a better option.
+
+Source: [API development with nodejs, express and typescript from scratch — DTO, Interface and Authentication (GitConnected/LukasWimhofer)](https://levelup.gitconnected.com/api-development-with-nodejs-express-and-typescript-from-scratch-dto-interface-and-54ebab8c447e)
 
 ## 5. Service (Optional)
 
@@ -282,14 +309,14 @@ There are several reasons why some Express REST APIs may use a Service layer, wh
 
 However, there are cases where a Service layer may not be necessary or may add unnecessary complexity to the application. If the business logic is simple and straightforward, and there is no need for reusability or testing, a Service layer may be overkill. Ultimately, the decision to use a Service layer or not will depend on the specific needs of the application and the preferences of the development team.
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br> 
 Example in Section: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service)
 
 ## 6. Controller
 A Controller handles requests and responses between the client and the server. It takes input from the user, retrieves data from the database using the Model, and then formats the data for the client. The Controller also handles errors and exceptions that may occur during the request.
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br> 
 Examples in Sections: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service) and
 [11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service)
@@ -297,7 +324,7 @@ Examples in Sections: [10. Express REST API Example (With Service)](#10-express-
 ## 7. Routes
 A Route maps a URL path to a specific Controller function. It defines what HTTP methods (GET, POST, PUT, DELETE, etc.) are allowed for that endpoint.
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br>
 Examples in Sections: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service) and
 [11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service)
@@ -347,21 +374,20 @@ app.use(errorMiddleware);
 
 In this example, we define three middleware functions: loggerMiddleware, authMiddleware, and errorMiddleware. The loggerMiddleware function logs the request method, URL, and timestamp to the console. The authMiddleware function checks if the user is authenticated before allowing access to protected routes. The errorMiddleware function handles errors that occur during the request-response cycle by logging the error to the console and returning an error response to the client.
 
-We then add the middleware functions to the Express app using the use() method. We add the loggerMiddleware globally, so it will be executed for every incoming request. We add the authMiddleware locally to a specific route, so it will only be executed for requests to that route. Finally, we add the errorMiddleware globally to handle any errors that occur during the request-response cycle.
+We then add the middleware functions to the Express app using the `use()` method. We add the loggerMiddleware globally, so it will be executed for every incoming request. We add the authMiddleware locally to a specific route, so it will only be executed for requests to that route. Finally, we add the errorMiddleware globally to handle any errors that occur during the request-response cycle.
 
 <ins>For MERN Stack Apps:</ins>
 
-We use `app.use(cors());` in Express when building a MERN (MongoDB, Express, React, Node) stack app to enable Cross-Origin Resource Sharing (CORS).
+- We use `app.use(cors());` in Express when building a MERN (MongoDB, Express, React, Node) stack app to enable Cross-Origin Resource Sharing (CORS).
 
-CORS is a security feature implemented by web browsers that prevents a web page from making requests to a different domain than the one that served the web page. In the context of a MERN stack app, this means that the React client running in the user's browser cannot make requests to the Express server running on a different domain.
+- CORS is a security feature implemented by web browsers that prevents a web page from making requests to a different domain than the one that served the web page. In the context of a MERN stack app, this means that the React client running in the user's browser cannot make requests to the Express server running on a different domain.
 
-By using `app.use(cors())` in Express, we are telling the server to include CORS headers in its responses, which will allow the React client to make requests to the Express server from a different domain.
+- By using `app.use(cors())` in Express, we are telling the server to include CORS headers in its responses, which will allow the React client to make requests to the Express server from a different domain.
 
-Note that it's important to properly configure CORS to avoid potential security vulnerabilities. For example, you may want to limit which domains are allowed to make requests to your server by passing an options object to cors().
+- Note that it's important to properly configure CORS to avoid potential security vulnerabilities. For example, you may want to limit which domains are allowed to make requests to your server by passing an options object to `cors()`.
 
-## 9. Extra Features
+### 8.1. Exceptions
 
-### 9.1. Exceptions
 In an Express REST API, we can use an exception handler to catch and handle errors that occur during the execution of our application. Here's an example of how we can create an exception handler in an Express app:
 
 <ins>NOTE:</ins>
@@ -378,9 +404,9 @@ function errorHandler(err, req, res, next) {
 module.exports = errorHandler;
 ```
 
-In this example, we define a function called errorHandler that takes four parameters: err, req, res, and next. This function is a middleware function that is used to handle errors that occur during the execution of our application.
+In this example, we define a function called errorHandler that takes four parameters: `(err, req, res, next)`. This function is a middleware function that is used to handle errors that occur during the execution of our application.
 
-Inside the errorHandler function, we log the error to the console using console.error, and then send a JSON response to the client with a status of 500 and a message of "Internal Server Error".
+Inside the errorHandler function, we log the error to the console using `console.error`, and then send a JSON response to the client with a status of 500 and a message of "Internal Server Error".
 
 We can then use this error handler in our Express app by calling it after all other middleware functions and route handlers:
 ```js
@@ -400,163 +426,16 @@ app.listen(3000, () => {
 });
 ```
 
-In this example, we import our errorHandler middleware function and our todoRouter from their respective files. We then use app.use to add the errorHandler middleware function to our Express app after all other middleware functions and route handlers.
+In this example, we import our errorHandler middleware function and our todoRouter from their respective files. We then use `app.use` to add the errorHandler middleware function to our Express app after all other middleware functions and route handlers.
 
 By adding the errorHandler middleware function to our app, any errors that occur during the execution of our app will be caught by this middleware function and handled appropriately, preventing the app from crashing and providing a more user-friendly error message to the client.
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br>
-We can use this to handle all 5xx server errors outside of the Controller to make the code in Section: [11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service) more readable. For example, we can implement the error/exception handler as shown in the video: [Hate Try...Catch Error Handling in Node.js? Do This Instead (Youtube/Gravity)](https://www.youtube.com/watch?v=s5YoXms0ECs). Here, we only need if-else statements in the Controller layer (no try-catch required), that will return 2xx or 4xx codes, as any 5xx status codes will be handled directly by the exception handler in the Middleware (or Router/App) layer!
+We can use this to handle all 5xx server errors outside of the Controller to make the code in Section: [11. Express REST API Example (No Service)](#11-express-rest-api-example-no-service) more readable. For example, we can implement the error/exception handler as shown in the video: [Hate Try...Catch Error Handling in Node.js? Do This Instead (Youtube/Gravity)](https://www.youtube.com/watch?v=s5YoXms0ECs). Thus, we only need if-else statements in the Controller layer (no try-catch required), that will return 2xx or 4xx codes, as any 5xx status codes will be handled directly by the exception handler in the Middleware (or Router/App) layer!
 
-### 9.2. Testing
+### 8.2. Logging
 
-[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20) - [GitHub](https://github.com/Sam-Meech-Ward/express_jest_and_mocks/tree/express)
-<br>
-[How to Test Your Express.js and Mongoose Apps with Jest and SuperTest (FreeCodeCamp/RakeshPotnuru)](https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/) - [GitHub](https://github.com/itsrakeshhq/jest-tests-demo)
-<br>
-
-Here's an example of how to set up and run tests using Jest (and Supertest) in an Express REST API:
-
-1. Install Jest and any necessary dependencies:
-
-```js
-npm install --save-dev jest supertest
-```
-
-1. Create a new folder called tests in the root of your project.
-2. Inside the tests folder, create a new file called example.test.js:
-
-```bash
-const request = require('supertest');
-const app = require('../app');
-
-describe('Example endpoint', () => {
-  it('should return a 200 status code', async () => {
-    const res = await request(app).get('/example');
-    expect(res.statusCode).toEqual(200);
-  });
-});
-```
-
-1. In the above example, we are testing the /example endpoint of our app. Replace this with the endpoint you want to test.
-2. In the above example, we are using supertest to send HTTP requests to our app. Make sure to import app from your main index.js or app.js file.
-3. In the above example, we are using the Jest expect function to make assertions about the response. You can add any additional assertions you need here.
-4. In your package.json file, add the following under "scripts":
-
-```json
-"test": "jest"
-```
-
-1. Run the tests:
-
-```bash
-npm test
-```
-
-That's it! You should now see the results of your tests in the terminal.
-
-<ins>NOTE: </ins>
-<br>
-Problem - If I use import/export from ES6 then all my Jest tests fail with error. Obviously there's a problem with import/export here. It's not practical for me to rewrite my code using ES5 syntax just to make my test framework happy.
-
-Solution - [Configuring Jest to support ES6 import/export? (StackOverflow/PeterMortensen)](https://stackoverflow.com/a/59718259)
-
-<ins>Mocking DB</ins>
-
-[Express.js testing: mocking MongoDB (Medium/LucaPizzini)](https://medium.com/weekly-webtips/express-js-testing-mocking-mongodb-46c3797a201)
-
-Problem - In my express rest api, I am testing my endpoints using jest and supertest. I have noticed that my tests are working, but they are interacting with the actual database. I want to use a fake temporary database so that any tests being run, do not effect the actual database.
-
-Solution - To use a temporary fake database for testing your Express REST API, you can use a package like mongodb-memory-server. This package allows you to spin up an in-memory MongoDB database during the test setup and teardown. Here's an example of how to use it:
-
-1. First, install the mongodb-memory-server package:
-
-```bash
-npm install mongodb-memory-server --save-dev
-```
-
-1. Create a separate configuration file for your test environment, where you will set up the in-memory MongoDB database. Here's an example of what that file could look like:
-
-```js
-// test/config.js
-
-const { MongoMemoryServer } = require('mongodb-memory-server');
-
-module.exports = async function () {
-  const mongoServer = new MongoMemoryServer();
-
-  const mongoUri = await mongoServer.getUri();
-  const mongoOptions = {}; // any additional options you want to pass to mongoose.connect()
-
-  return {
-    mongoUri,
-    mongoOptions
-  };
-};
-```
-
-This file exports an async function that sets up a new in-memory MongoDB database using the MongoMemoryServer class. It returns an object with the MongoDB connection URI and any additional options you want to pass to mongoose.connect().
-
-1. In your test file, use the beforeAll and afterAll hooks to set up and tear down the database. Here's an example:
-
-```js
-// tests/app.test.js
-
-const request = require('supertest');
-const app = require('../app');
-const mongoose = require('mongoose');
-
-let mongoServer;
-
-beforeAll(async () => {
-  const config = await require('../config')();
-  mongoServer = await mongoose.connect(config.mongoUri, config.mongoOptions);
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-});
-
-describe('GET /users', () => {
-  test('responds with a list of users', async () => {
-    const res = await request(app).get('/users');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBeGreaterThan(0);
-  });
-});
-
-// more test cases...
-```
-
-In this example, we use the beforeAll and afterAll hooks to set up and tear down the database using the config function from the previous step. In the test cases, we use `request(app)` to send HTTP requests to the API and make assertions using Jest's `expect` function.
-
-By using mongodb-memory-server and setting up a temporary in-memory MongoDB database for testing, you can run your tests without affecting your production database.
-
-
-### 9.3. DTO Layer
-
-In a RESTful API, DTOs are used to represent the data that is being transferred between the client and the server. They are essentially data containers that carry information about a particular entity or resource in the system. DTOs are often used to abstract away the internal details of the server-side data model and provide a standardized interface for clients to interact with.
-
-Similarly, TypeScript interfaces are used to describe the structure of data objects in a TypeScript application. They define the shape of objects, their properties and their types, and can be used to enforce type checking during development. When used in a REST API, TypeScript interfaces can be thought of as DTOs, as they represent the data that is being sent and received by the API.
-
-However, it is important to note that while TypeScript interfaces can be used as DTOs, they do not necessarily perform all the functions of a DTO. DTOs may also include additional functionality such as validation, data transformation, or serialization/deserialization. Nonetheless, TypeScript interfaces can be a useful tool in building DTOs in a TypeScript-based REST API.
-
-<ins>Summary:</ins>
-
-> In TypeScript, both classes and interfaces can be used to define Data Transfer Objects (DTOs). The choice between using classes or interfaces will depend on the specific requirements of your application.
->
->Interfaces are commonly used to define DTOs because they allow you to describe the structure of an object without providing an implementation for its methods. Interfaces are a lightweight way to enforce type safety in your code, and to provide a clear contract between different parts of your application.
->
->Classes, on the other hand, can provide more functionality than interfaces, as they allow you to define both the structure and implementation of an object. Classes are often used when you need to define complex data structures that have methods or other behavior.
->
->We are using a class to define our dto, because we also use some class validator decorators.
->
->In general, if you only need to describe the structure of a DTO, an interface is the preferred choice. However, if you need to add methods or other behavior to your DTO, a class may be a better option.
-
-Source: [API development with nodejs, express and typescript from scratch — DTO, Interface and Authentication (GitConnected/LukasWimhofer)](https://levelup.gitconnected.com/api-development-with-nodejs-express-and-typescript-from-scratch-dto-interface-and-54ebab8c447e)
-
-### 9.4. Logging
 In an Express REST API, we can use a logger to keep track of application events and errors. We saw a basic example of this in Section: [8. Middleware](#8-middleware). Here's another example of how we can create and use a logger in an Express app:
 
 ```js
@@ -690,10 +569,377 @@ app.listen(3000, () => {
 });
 ```
 
-### 9.5. Security
-TBC
+## 9. Testing
 
-## 10. Express REST API Example (With Service)
+[Testing Node Server with Jest and Supertest (Youtube/SamMeech-Ward)](https://www.youtube.com/watch?v=FKnzS_icp20) - [GitHub](https://github.com/Sam-Meech-Ward/express_jest_and_mocks/tree/express)
+<br>
+[How to Test Your Express.js and Mongoose Apps with Jest and SuperTest (FreeCodeCamp/RakeshPotnuru)](https://www.freecodecamp.org/news/how-to-test-in-express-and-mongoose-apps/) - [GitHub](https://github.com/itsrakeshhq/jest-tests-demo)
+<br>
+
+Here's an example of how to set up and run tests using Jest (and Supertest) in an Express REST API:
+
+1. Install Jest and any necessary dependencies:
+
+```js
+npm install --save-dev jest supertest
+```
+
+1. Create a new folder called tests in the root of your project.
+2. Inside the tests folder, create a new file called example.test.js:
+
+```bash
+const request = require('supertest');
+const app = require('../app');
+
+describe('Example endpoint', () => {
+  it('should return a 200 status code', async () => {
+    const res = await request(app).get('/example');
+    expect(res.statusCode).toEqual(200);
+  });
+});
+```
+
+1. In the above example, we are testing the /example endpoint of our app. Replace this with the endpoint you want to test.
+2. In the above example, we are using supertest to send HTTP requests to our app. Make sure to import app from your main index.js or app.js file.
+3. In the above example, we are using the Jest expect function to make assertions about the response. You can add any additional assertions you need here.
+4. In your package.json file, add the following under "scripts":
+
+```json
+"test": "jest"
+```
+
+1. Run the tests:
+
+```bash
+npm test
+```
+
+That's it! You should now see the results of your tests in the terminal.
+
+<ins>NOTE:</ins>
+<br>
+Problem - If I use import/export from ES6 then all my Jest tests fail with error. Obviously there's a problem with import/export here. It's not practical for me to rewrite my code using ES5 syntax just to make my test framework happy.
+
+Solution - [Configuring Jest to support ES6 import/export? (StackOverflow/PeterMortensen)](https://stackoverflow.com/a/59718259)
+
+<ins>Mocking DB</ins>
+
+[Express.js testing: mocking MongoDB (Medium/LucaPizzini)](https://medium.com/weekly-webtips/express-js-testing-mocking-mongodb-46c3797a201)
+
+Problem - In my express rest api, I am testing my endpoints using jest and supertest. I have noticed that my tests are working, but they are interacting with the actual database. I want to use a fake temporary database so that any tests being run, do not effect the actual database.
+
+Solution - To use a temporary fake database for testing your Express REST API, you can use a package like mongodb-memory-server. This package allows you to spin up an in-memory MongoDB database during the test setup and teardown. Here's an example of how to use it:
+
+1. First, install the mongodb-memory-server package:
+
+```bash
+npm install mongodb-memory-server --save-dev
+```
+
+1. Create a separate configuration file for your test environment, where you will set up the in-memory MongoDB database. Here's an example of what that file could look like:
+
+```js
+// test/config.js
+
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+module.exports = async function () {
+  const mongoServer = new MongoMemoryServer();
+
+  const mongoUri = await mongoServer.getUri();
+  const mongoOptions = {}; // any additional options you want to pass to mongoose.connect()
+
+  return {
+    mongoUri,
+    mongoOptions
+  };
+};
+```
+
+This file exports an async function that sets up a new in-memory MongoDB database using the MongoMemoryServer class. It returns an object with the MongoDB connection URI and any additional options you want to pass to mongoose.connect().
+
+1. In your test file, use the beforeAll and afterAll hooks to set up and tear down the database. Here's an example:
+
+```js
+// tests/app.test.js
+
+const request = require('supertest');
+const app = require('../app');
+const mongoose = require('mongoose');
+
+let mongoServer;
+
+beforeAll(async () => {
+  const config = await require('../config')();
+  mongoServer = await mongoose.connect(config.mongoUri, config.mongoOptions);
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
+});
+
+describe('GET /users', () => {
+  test('responds with a list of users', async () => {
+    const res = await request(app).get('/users');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+});
+
+// more test cases...
+```
+
+In this example, we use the beforeAll and afterAll hooks to set up and tear down the database using the config function from the previous step. In the test cases, we use `request(app)` to send HTTP requests to the API and make assertions using Jest's `expect` function.
+
+By using mongodb-memory-server and setting up a temporary in-memory MongoDB database for testing, you can run your tests without affecting your production database.
+
+## 10. Security
+<ins>Guides:</ins>
+<br>
+[Create a MERN CRUD App (4/6) - Adding JWT Authentication to our Express server (Youtube/CodingWithRobby)](https://www.youtube.com/watch?v=fRkVmnc-gK4&list=PL-LRDpVN2fZA-1igOQ6PDcqfBjS-vaC7w&index=5)
+<br>
+[Node.js Auth Tutorial (JWT) [Playlist] (Youtube/TheNetNinja)](https://www.youtube.com/playlist?list=PL4cUxeGkcC9iqqESP8335DA5cRFp8loyp)
+
+Here's a summary of the steps taken in the [tutorial](https://www.youtube.com/watch?v=fRkVmnc-gK4&list=PL-LRDpVN2fZA-1igOQ6PDcqfBjS-vaC7w&index=5) on adding JWT Authentication to an Express REST API:
+
+1. Add "User" Model to define the user schema.
+
+```js
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    index: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+});
+
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;
+```
+
+2. Create "User" Controller with the below methods/functions for handling user authentication.
+
+```js
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+async function signup(req, res) {
+  try {
+    // Get the email and password off req body
+    const { email, password } = req.body;
+
+    // Hash password
+    const hashedPassword = bcrypt.hashSync(password, 8);
+
+    // Create a user with the data
+    await User.create({ email, password: hashedPassword });
+
+    // respond
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(400);
+  }
+}
+
+async function login(req, res) {
+  try {
+    // Get the email and password off req body
+    const { email, password } = req.body;
+
+    // Find the user with requested email
+    const user = await User.findOne({ email });
+    if (!user) return res.sendStatus(401);
+
+    // Compare sent in password with found user password hash
+    const passwordMatch = bcrypt.compareSync(password, user.password);
+    if (!passwordMatch) return res.sendStatus(401);
+
+    // create a jwt token
+    const exp = Date.now() + 1000 * 60 * 60 * 24 * 30;
+    const token = jwt.sign({ sub: user._id, exp }, process.env.SECRET);
+
+    // Set the cookie
+    res.cookie("Authorization", token, {
+      expires: new Date(exp),
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    // respond
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(400);
+  }
+}
+
+function logout(req, res) {
+  try {
+    // clear cookie
+    res.cookie("Authorization", "", { expires: new Date() });
+
+    // respond
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(400);
+  }
+}
+
+function checkAuth(req, res) {
+  try {
+    res.sendStatus(200);
+  } catch (err) {
+    return res.sendStatus(400);
+  }
+}
+
+module.exports = {
+  signup,
+  login,
+  logout,
+  checkAuth,
+};
+```
+<ins>Note:</ins>
+<br>
+We could extract some of the logic used in the Controller to a Service layer, as shown in Section: [10. Express REST API Example (With Service)](#10-express-rest-api-example-with-service), but for the purpose of this guide, it is not necessary.
+
+<ins>Note:</ins>
+<br>
+- `signup()` - In this function it is imperative you do not save passwords in plain-text. Here, Bcrypt is used to encrypt the password before a user is created and stored in the database. To use Bcyrpt, use `npm install bcryptjs` to install the packages to your project.
+<br>
+- `login()` - In this function, a jwt token is issued if the user credentials are valid. Note that the ".env" file contains the secret key used to sign the end of the jwt token. To use JWT, use `npm install jsonwebtoken` to install the packages to your project. Also, cookies are used here to store the jwt token and its properties, such as expiration time and so on. To use cookies, use `npm install cookie-parser` to install the packages to your project (module used in app.js). The method in which the cookies are set in the response can vary, another configuration is: `res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });`
+<br>
+- `logout()` - In this function, the cookie that stores the jwt token is cleared upon reaching the logout endpoint.
+<br>
+- `checkAuth()` - This function is simply used to verify if the user has been authenticated or not.
+
+3. Create the "Auth" Middleware that will be used to authenticate the jwt token in the cookie and check its validity (for the routes this middleware has been added to):
+
+```js
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+async function requireAuth(req, res, next) {
+  try {
+    // Read token off cookies
+    const token = req.cookies.Authorization;
+
+    // Decode the token
+    const decoded = jwt.verify(token, process.env.SECRET);
+
+    // Check expiration
+    if (Date.now() > decoded.exp) return res.sendStatus(401);
+
+    // Find user using decoded sub
+    const user = await User.findById(decoded.sub);
+    if (!user) return res.sendStatus(401);
+
+    // Attach user to req
+    req.user = user;
+
+    // Continue on
+    next();
+  } catch (err) {
+    return res.sendStatus(401);
+  }
+}
+
+module.exports = requireAuth;
+```
+
+<ins>Note:</ins>
+<br>
+Don't forget to add the secret key to the ".env" file that is used to sign the end of the jwt token, which is being used here to decode and verify the token being passed in for any requests intercepted by the requireAuth middleware.
+
+4. Update the "server.js" (or app.js/index.js/route.js) file to use the authentication routes and middleware.
+
+```js
+app.post("/signup", usersController.signup);
+app.post("/login", usersController.login);
+app.get("/logout", usersController.logout);
+app.get("/check-auth", requireAuth, usersController.checkAuth);
+```
+
+<ins>Note:</ins>
+<br>
+'/check-auth' endpoint uses the requireAuth middleware, therefore it is a protected route and only authenticated users can access it.
+
+5. Add any extra configuration/middleware.
+
+```js
+//server.js
+
+// Load env variables
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
+
+// Import dependencies
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const connectToDb = require("./config/connectToDb");
+const notesController = require("./controllers/notesController");
+const usersController = require("./controllers/usersController");
+const requireAuth = require("./middleware/requireAuth");
+
+// Create an express app
+const app = express();
+
+// Configure express app
+app.use(express.json());
+/* NEW CONFIG */
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
+
+// Connect to database
+connectToDb();
+
+// Routing
+app.post("/signup", usersController.signup);
+app.post("/login", usersController.login);
+app.get("/logout", usersController.logout);
+app.get("/check-auth", requireAuth, usersController.checkAuth);
+app.get("/notes", notesController.fetchNotes);
+app.get("/notes/:id", notesController.fetchNote);
+app.post("/notes", notesController.createNote);
+app.put("/notes/:id", notesController.updateNote);
+app.delete("/notes/:id", notesController.deleteNote);
+
+// Start our server
+app.listen(process.env.PORT);
+```
+
+<ins>Note:</ins>
+<br>
+- Must add middleware `cookieParser()`, remember to install using `npm i cookie-parser` and to import module. More info on this implementation at: [Node Auth Tutorial (JWT) #9 - Cookies Primer (Youtube/TheNetNinja)](https://www.youtube.com/watch?v=mevc_dl1i1I&list=PL4cUxeGkcC9iqqESP8335DA5cRFp8loyp&index=10).
+- If the Express App is interacting with a React App, on a different domain, special configuration must be applied on `cors()` middleware. This is done so requests from both apps on different ports will not fail when interacting with one another. as this Express App will be working with a React App which is itself hosted on a different domain. As both apps are hosted on different domains, this configuration must be applied. More info on this implementation at: [How to use CORS in Node.js with Express (Section/JosephChege)](https://www.section.io/engineering-education/how-to-use-cors-in-nodejs-with-express/).
+
+
+Your Express App should now be secured with JWT's! You can test the authentication implementation by registering a user, logging in, and accessing a protected route.
+
+
+## 11. Express REST API Example (With Service)
 Here is an example of how the Model, Service and Controller components work together in an Express REST API:
 
 ```js
@@ -766,13 +1012,13 @@ module.exports = router;
 
 In this example, the Model is represented by the UserModel, the Controller is represented by the UserController, and the Route is defined using the Express Router. The UserService is an intermediary between the UserController and UserModel, responsible for implementing complex business logic, and accessing multiple Models.
 
-## 11. Express REST API Example (No Service)
+## 12. Express REST API Example (No Service)
 
-<ins>NOTE: </ins>
+<ins>NOTE:</ins>
 <br> 
 🚨 This is the most common approach for creating Express REST API's.
 <br>
-🚨 This does not mean it is the only approach and that Services are bad, it is simply something to be aware of when reading other devs API's and developing your own.
+🚨 This does not mean it is the only approach and that Services are bad, it is simply something to consider when reading other devs API's and developing your own.
 
 
 
