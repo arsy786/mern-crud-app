@@ -825,7 +825,7 @@ We could extract some of the logic used in the Controller to a Service layer, as
 - `logout()` - In this function, the cookie that stores the jwt token is cleared upon reaching the logout endpoint.
 - `checkAuth()` - This function is simply used to verify if the user has been authenticated or not.
 
-1. Create the "Auth" Middleware that will be used to authenticate the jwt token in the cookie and check its validity (for the routes this middleware has been added to):
+3. Create the "Auth" Middleware that will be used to authenticate the jwt token in the cookie and check its validity (for the routes this middleware has been added to):
 
 ```js
 const jwt = require("jsonwebtoken");
