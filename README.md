@@ -1,7 +1,7 @@
-# MERN CRUD APP TUTORIAL
+# NODEJS & EXPRESS TUTORIAL
 
 ## Table of Contents
-- [MERN CRUD APP TUTORIAL](#mern-crud-app-tutorial)
+- [NODEJS & EXPRESS TUTORIAL](#nodejs-&-express-tutorial)
   - [Table of Contents](#table-of-contents)
   - [0. Stack](#0-stack)
   - [1. REST API](#1-rest-api)
